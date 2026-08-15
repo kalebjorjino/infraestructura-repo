@@ -27,6 +27,13 @@ spec:
           ports:
             - name: https
               containerPort: 5601
+          env:
+            - name: INDEXER_URL
+              value: "https://{{ include "wazuh.fullname" . }}-indexer:9200"
+            - name: OPENSEARCH_HOSTS
+              value: "https://{{ include "wazuh.fullname" . }}-indexer:9200"
+            - name: WAZUH_API_URL
+              value: "https://{{ include "wazuh.fullname" . }}-manager:55000"
           resources:
             {{- toYaml .Values.dashboard.resources | nindent 12 }}
 ---

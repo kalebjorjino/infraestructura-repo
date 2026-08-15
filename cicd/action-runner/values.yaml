@@ -7,7 +7,7 @@ image:
   pullPolicy: IfNotPresent
 
 runner:
-  organization: "tu-organizacion"
+  organization: ""
   repository: "kalebjorjino/infraestructura-repo"
   token: "AT2U6UKGT47IUKOBZWSPGF3KQC4GE"
   labels:

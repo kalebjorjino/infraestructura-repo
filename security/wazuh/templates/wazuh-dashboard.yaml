@@ -16,6 +16,19 @@ data:
     opensearch_security.enabled: false
     server.ssl.enabled: false
     uiSettings.overrides.defaultRoute: /app/wazuh
+  wazuh.yml: |
+    pattern: wazuh-alerts-*
+    checks.pattern: true
+    checks.template: false
+    checks.api: true
+    checks.setup: true
+    hosts:
+      - default:
+          url: https://{{ include "wazuh.fullname" . }}-manager
+          port: 55000
+          username: wazuh-wui
+          password: wazuh-wui
+          run_as: false
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -49,13 +62,16 @@ spec:
             - name: INDEXER_URL
               value: "http://{{ include "wazuh.fullname" . }}-indexer:9200"
             - name: WAZUH_API_URL
-              value: "https://{{ include "wazuh.fullname" . }}-manager:55000"
+              value: "https://{{ include "wazuh.fullname" . }}-manager"
           resources:
             {{- toYaml .Values.dashboard.resources | nindent 12 }}
           volumeMounts:
             - name: dashboard-config
               mountPath: /usr/share/wazuh-dashboard/config/opensearch_dashboards.yml
               subPath: opensearch_dashboards.yml
+            - name: dashboard-config
+              mountPath: /usr/share/wazuh-dashboard/data/wazuh/config/wazuh.yml
+              subPath: wazuh.yml
       volumes:
         - name: dashboard-config
           configMap:

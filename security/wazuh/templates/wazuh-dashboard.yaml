@@ -1,4 +1,24 @@
 {{- if .Values.dashboard.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "wazuh.fullname" . }}-dashboard-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "wazuh.labels" . | nindent 4 }}
+    app.kubernetes.io/component: dashboard
+data:
+  opensearch_dashboards.yml: |
+    server.host: 0.0.0.0
+    server.port: 5601
+    opensearch.hosts: ["http://{{ include "wazuh.fullname" . }}-indexer:9200"]
+    opensearch.ssl.verificationMode: none
+    opensearch.requestHeadersWhitelist: [ authorization,securitytenant ]
+    opensearch_security.multitenancy.enabled: false
+    opensearch_security.readonly_mode.roles: ["kibana_read_only"]
+    server.ssl.enabled: false
+    uiSettings.overrides.defaultRoute: /app/wazuh
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -25,17 +45,23 @@ spec:
           image: "{{ .Values.dashboard.image.repository }}:{{ .Values.dashboard.image.tag }}"
           imagePullPolicy: {{ .Values.dashboard.image.pullPolicy }}
           ports:
-            - name: https
+            - name: http
               containerPort: 5601
           env:
             - name: INDEXER_URL
-              value: "https://{{ include "wazuh.fullname" . }}-indexer:9200"
-            - name: OPENSEARCH_HOSTS
-              value: "https://{{ include "wazuh.fullname" . }}-indexer:9200"
+              value: "http://{{ include "wazuh.fullname" . }}-indexer:9200"
             - name: WAZUH_API_URL
               value: "https://{{ include "wazuh.fullname" . }}-manager:55000"
           resources:
             {{- toYaml .Values.dashboard.resources | nindent 12 }}
+          volumeMounts:
+            - name: dashboard-config
+              mountPath: /usr/share/wazuh-dashboard/config/opensearch_dashboards.yml
+              subPath: opensearch_dashboards.yml
+      volumes:
+        - name: dashboard-config
+          configMap:
+            name: {{ include "wazuh.fullname" . }}-dashboard-config
 ---
 apiVersion: v1
 kind: Service
@@ -48,8 +74,8 @@ metadata:
 spec:
   type: {{ .Values.dashboard.service.type }}
   ports:
-    - name: https
-      port: {{ .Values.dashboard.service.port }}
+    - name: http
+      port: 5601
       targetPort: 5601
       protocol: TCP
   selector:

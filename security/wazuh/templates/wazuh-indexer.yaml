@@ -1,4 +1,21 @@
 {{- if .Values.indexer.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "wazuh.fullname" . }}-indexer-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "wazuh.labels" . | nindent 4 }}
+    app.kubernetes.io/component: indexer
+data:
+  opensearch.yml: |
+    cluster.name: "wazuh-cluster"
+    network.host: "0.0.0.0"
+    node.name: "wazuh-indexer"
+    discovery.type: "single-node"
+    plugins.security.disabled: true
+    compatibility.override_main_response_version: true
+---
 {{- if .Values.indexer.storage.enabled }}
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -45,13 +62,11 @@ spec:
           image: "{{ .Values.indexer.image.repository }}:{{ .Values.indexer.image.tag }}"
           imagePullPolicy: {{ .Values.indexer.image.pullPolicy }}
           env:
-            - name: discovery.type
-              value: "single-node"
             - name: OPENSEARCH_JAVA_OPTS
               value: "-Xms512m -Xmx512m"
-            - name: DISABLE_INSTALL_DEMO_CONFIG
-              value: "true"
             - name: DISABLE_SECURITY_PLUGIN
+              value: "true"
+            - name: DISABLE_INSTALL_DEMO_CONFIG
               value: "true"
           ports:
             - name: http
@@ -63,9 +78,15 @@ spec:
           resources:
             {{- toYaml .Values.indexer.resources | nindent 12 }}
           volumeMounts:
+            - name: indexer-config
+              mountPath: /usr/share/wazuh-indexer/opensearch.yml
+              subPath: opensearch.yml
             - name: indexer-data
               mountPath: /var/lib/wazuh-indexer
       volumes:
+        - name: indexer-config
+          configMap:
+            name: {{ include "wazuh.fullname" . }}-indexer-config
         - name: indexer-data
           {{- if .Values.indexer.storage.enabled }}
           persistentVolumeClaim:

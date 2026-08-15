@@ -8,7 +8,7 @@ metadata:
 spec:
   project: infrastructure
   source:
-    repoURL: 'https://github.com/tu-organizacion/infraestructura-repo.git'
+    repoURL: 'https://github.com/kalebjorjino/infraestructura-repo.git'
     targetRevision: HEAD
     path: security/wazuh
     helm:

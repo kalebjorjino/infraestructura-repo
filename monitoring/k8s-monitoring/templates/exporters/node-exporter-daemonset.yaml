@@ -18,8 +18,8 @@ spec:
         {{- include "k8s-monitoring.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: node-exporter
     spec:
-      hostNetwork: true
-      hostPID: true
+      hostNetwork: false
+      hostPID: false
       containers:
         - name: node-exporter
           image: "{{ .Values.nodeExporter.image.repository }}:{{ .Values.nodeExporter.image.tag }}"

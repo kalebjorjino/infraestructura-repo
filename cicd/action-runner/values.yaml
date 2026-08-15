@@ -8,8 +8,8 @@ image:
 
 runner:
   organization: "tu-organizacion"
-  repository: ""
-  token: "CHANGEME_RUNNER_TOKEN"
+  repository: "kalebjorjino/infraestructura-repo"
+  token: "AT2U6UKGT47IUKOBZWSPGF3KQC4GE"
   labels:
     - self-hosted
     - linux

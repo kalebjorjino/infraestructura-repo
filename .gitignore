@@ -1,0 +1,10 @@
+# Helm
+*.tgz
+*.lock
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp

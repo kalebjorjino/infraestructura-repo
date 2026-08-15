@@ -1,0 +1,8 @@
+apiVersion: v2
+name: k8s-monitoring
+description: Helm Chart para la pila de observabilidad y monitoreo de Kubernetes (Prometheus + Grafana + Exporters)
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+maintainers:
+  - name: DevOps / Platform Team

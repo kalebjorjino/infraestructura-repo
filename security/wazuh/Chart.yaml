@@ -1,0 +1,8 @@
+apiVersion: v2
+name: wazuh
+description: Helm Chart para la pila de seguridad y detección de amenazas Wazuh (Manager + Dashboard + Indexer)
+type: application
+version: 0.1.0
+appVersion: "4.7.2"
+maintainers:
+  - name: Security Team

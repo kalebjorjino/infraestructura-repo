@@ -1,0 +1,100 @@
+{{- if .Values.manager.enabled }}
+{{- if .Values.manager.storage.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "wazuh.fullname" . }}-manager-pvc
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "wazuh.labels" . | nindent 4 }}
+    app.kubernetes.io/component: manager
+spec:
+  accessModes:
+    {{- toYaml .Values.manager.storage.accessModes | nindent 4 }}
+  resources:
+    requests:
+      storage: {{ .Values.manager.storage.size }}
+  {{- if .Values.manager.storage.storageClassName }}
+  storageClassName: {{ .Values.manager.storage.storageClassName | quote }}
+  {{- end }}
+---
+{{- end }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "wazuh.fullname" . }}-manager
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "wazuh.labels" . | nindent 4 }}
+    app.kubernetes.io/component: manager
+spec:
+  replicas: {{ .Values.manager.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "wazuh.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: manager
+  template:
+    metadata:
+      labels:
+        {{- include "wazuh.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: manager
+    spec:
+      serviceAccountName: {{ include "wazuh.serviceAccountName" . }}
+      containers:
+        - name: wazuh-manager
+          image: "{{ .Values.manager.image.repository }}:{{ .Values.manager.image.tag }}"
+          imagePullPolicy: {{ .Values.manager.image.pullPolicy }}
+          ports:
+            - name: agent-events
+              containerPort: 1514
+              protocol: TCP
+            - name: registration
+              containerPort: 1515
+              protocol: TCP
+            - name: cluster
+              containerPort: 1516
+              protocol: TCP
+            - name: api
+              containerPort: 55000
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.manager.resources | nindent 12 }}
+          volumeMounts:
+            - name: manager-data
+              mountPath: /var/ossec/data
+      volumes:
+        - name: manager-data
+          {{- if .Values.manager.storage.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "wazuh.fullname" . }}-manager-pvc
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "wazuh.fullname" . }}-manager
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "wazuh.labels" . | nindent 4 }}
+    app.kubernetes.io/component: manager
+spec:
+  type: {{ .Values.manager.service.type }}
+  ports:
+    - name: agent-events
+      port: {{ .Values.manager.service.ports.agentEvents }}
+      targetPort: 1514
+      protocol: TCP
+    - name: registration
+      port: {{ .Values.manager.service.ports.agentRegistration }}
+      targetPort: 1515
+      protocol: TCP
+    - name: api
+      port: {{ .Values.manager.service.ports.api }}
+      targetPort: 55000
+      protocol: TCP
+  selector:
+    {{- include "wazuh.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: manager
+{{- end }}

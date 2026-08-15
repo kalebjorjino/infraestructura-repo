@@ -1,0 +1,33 @@
+# Default values for action-runner.
+replicaCount: 2
+
+image:
+  repository: summerwind/actions-runner
+  tag: latest
+  pullPolicy: IfNotPresent
+
+runner:
+  organization: "tu-organizacion"
+  repository: ""
+  token: "CHANGEME_RUNNER_TOKEN"
+  labels:
+    - self-hosted
+    - linux
+    - k8s
+
+serviceAccount:
+  create: true
+  name: action-runner-sa
+
+resources:
+  limits:
+    cpu: 2000m
+    memory: 4Gi
+  requests:
+    cpu: 500m
+    memory: 1Gi
+
+env: []
+nodeSelector: {}
+tolerations: []
+affinity: {}

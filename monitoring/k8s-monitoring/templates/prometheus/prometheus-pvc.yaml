@@ -1,0 +1,18 @@
+{{- if and .Values.prometheus.enabled .Values.prometheus.storage.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "k8s-monitoring.fullname" . }}-prometheus-pvc
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "k8s-monitoring.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    {{- toYaml .Values.prometheus.storage.accessModes | nindent 4 }}
+  resources:
+    requests:
+      storage: {{ .Values.prometheus.storage.size }}
+  {{- if .Values.prometheus.storage.storageClassName }}
+  storageClassName: {{ .Values.prometheus.storage.storageClassName | quote }}
+  {{- end }}
+{{- end }}

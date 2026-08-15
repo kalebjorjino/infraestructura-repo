@@ -1,0 +1,8 @@
+apiVersion: v2
+name: action-runner
+description: Helm Chart para desplegar ejecutores autohospedados de CI/CD (GitHub / GitLab Runners)
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+maintainers:
+  - name: DevOps / CI-CD Team

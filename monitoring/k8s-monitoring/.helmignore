@@ -1,0 +1,5 @@
+# Helm ignore
+.git/
+.gitignore
+*.tgz
+.DS_Store

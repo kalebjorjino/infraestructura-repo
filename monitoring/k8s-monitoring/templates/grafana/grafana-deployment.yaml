@@ -1,0 +1,65 @@
+{{- if .Values.grafana.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "k8s-monitoring.fullname" . }}-grafana
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "k8s-monitoring.labels" . | nindent 4 }}
+    app.kubernetes.io/component: grafana
+spec:
+  replicas: {{ .Values.grafana.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "k8s-monitoring.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: grafana
+  template:
+    metadata:
+      labels:
+        {{- include "k8s-monitoring.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: grafana
+    spec:
+      serviceAccountName: {{ include "k8s-monitoring.serviceAccountName" . }}
+      containers:
+        - name: grafana
+          image: "{{ .Values.grafana.image.repository }}:{{ .Values.grafana.image.tag }}"
+          imagePullPolicy: {{ .Values.grafana.image.pullPolicy }}
+          env:
+            - name: GF_SECURITY_ADMIN_USER
+              value: {{ .Values.grafana.adminUser | quote }}
+            - name: GF_SECURITY_ADMIN_PASSWORD
+              value: {{ .Values.grafana.adminPassword | quote }}
+            - name: GF_USERS_ALLOW_SIGN_UP
+              value: "false"
+          ports:
+            - name: http
+              containerPort: 3000
+          resources:
+            {{- toYaml .Values.grafana.resources | nindent 12 }}
+          volumeMounts:
+            - name: storage-volume
+              mountPath: /var/lib/grafana
+            - name: datasources-volume
+              mountPath: /etc/grafana/provisioning/datasources
+            - name: dashboards-provider-volume
+              mountPath: /etc/grafana/provisioning/dashboards
+            - name: dashboards-volume
+              mountPath: /var/lib/grafana/dashboards
+      volumes:
+        - name: storage-volume
+          {{- if .Values.grafana.storage.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "k8s-monitoring.fullname" . }}-grafana-pvc
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        - name: datasources-volume
+          configMap:
+            name: {{ include "k8s-monitoring.fullname" . }}-grafana-datasources
+        - name: dashboards-provider-volume
+          configMap:
+            name: {{ include "k8s-monitoring.fullname" . }}-grafana-dashboards-provider
+        - name: dashboards-volume
+          configMap:
+            name: {{ include "k8s-monitoring.fullname" . }}-grafana-dashboards
+{{- end }}

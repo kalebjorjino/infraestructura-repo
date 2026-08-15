@@ -1,0 +1,16 @@
+{{- if .Values.grafana.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "k8s-monitoring.fullname" . }}-grafana-dashboards
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "k8s-monitoring.labels" . | nindent 4 }}
+data:
+  kubernetes-cluster.json: |-
+{{ .Files.Get "dashboards/kubernetes-cluster.json" | indent 4 }}
+  kubernetes-nodes.json: |-
+{{ .Files.Get "dashboards/kubernetes-nodes.json" | indent 4 }}
+  workloads.json: |-
+{{ .Files.Get "dashboards/workloads.json" | indent 4 }}
+{{- end }}

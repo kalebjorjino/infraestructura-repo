@@ -1,4 +1,35 @@
 {{- if .Values.manager.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "wazuh.fullname" . }}-filebeat-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "wazuh.labels" . | nindent 4 }}
+    app.kubernetes.io/component: manager
+data:
+  filebeat.yml: |
+    filebeat.modules:
+      - module: wazuh
+        alerts:
+          enabled: true
+        archives:
+          enabled: false
+
+    setup.template.json.enabled: false
+    setup.ilm.enabled: false
+    output.elasticsearch:
+      hosts: ['http://{{ include "wazuh.fullname" . }}-indexer:9200']
+
+    logging.metrics.enabled: false
+
+    seccomp:
+      default_action: allow
+      syscalls:
+      - action: allow
+        names:
+        - rseq
+---
 {{- if .Values.manager.storage.enabled }}
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -62,6 +93,9 @@ spec:
           volumeMounts:
             - name: manager-data
               mountPath: /var/ossec/data
+            - name: filebeat-config
+              mountPath: /etc/filebeat/filebeat.yml
+              subPath: filebeat.yml
       volumes:
         - name: manager-data
           {{- if .Values.manager.storage.enabled }}
@@ -70,6 +104,9 @@ spec:
           {{- else }}
           emptyDir: {}
           {{- end }}
+        - name: filebeat-config
+          configMap:
+            name: {{ include "wazuh.fullname" . }}-filebeat-config
 ---
 apiVersion: v1
 kind: Service

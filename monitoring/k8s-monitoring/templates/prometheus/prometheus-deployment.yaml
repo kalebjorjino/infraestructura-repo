@@ -9,6 +9,8 @@ metadata:
     app.kubernetes.io/component: prometheus
 spec:
   replicas: {{ .Values.prometheus.replicaCount }}
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       {{- include "k8s-monitoring.selectorLabels" . | nindent 6 }}

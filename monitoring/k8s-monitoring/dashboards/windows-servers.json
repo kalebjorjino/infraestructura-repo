@@ -22,10 +22,7 @@
       "type": "row"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -43,11 +40,11 @@
               },
               {
                 "color": "yellow",
-                "value": 75
+                "value": 70
               },
               {
                 "color": "red",
-                "value": 90
+                "value": 85
               }
             ]
           },
@@ -77,10 +74,7 @@
       "pluginVersion": "10.4.0",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
+          "datasource": "Prometheus",
           "editorMode": "code",
           "expr": "100 - (avg by (instance) (rate(windows_cpu_time_total{mode=\"idle\", instance=~\"$instance\"}[2m])) * 100)",
           "legendFormat": "{{instance}}",
@@ -92,10 +86,7 @@
       "type": "gauge"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -147,10 +138,7 @@
       "pluginVersion": "10.4.0",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
+          "datasource": "Prometheus",
           "editorMode": "code",
           "expr": "100 - ((windows_os_physical_memory_free_bytes{instance=~\"$instance\"} / windows_cs_physical_memory_bytes{instance=~\"$instance\"}) * 100)",
           "legendFormat": "{{instance}}",
@@ -162,10 +150,7 @@
       "type": "gauge"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -209,12 +194,9 @@
       "pluginVersion": "10.4.0",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
+          "datasource": "Prometheus",
           "editorMode": "code",
-          "expr": "windows_system_system_up_time{instance=~\"$instance\"}",
+          "expr": "time() - windows_system_system_up_time{instance=~\"$instance\"}",
           "legendFormat": "Uptime",
           "range": true,
           "refId": "A"
@@ -224,10 +206,63 @@
       "type": "stat"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
       },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 18,
+        "y": 1
+      },
+      "id": 10,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.4.0",
+      "targets": [
+        {
+          "datasource": "Prometheus",
+          "editorMode": "code",
+          "expr": "windows_os_processes{instance=~\"$instance\"}",
+          "legendFormat": "Procesos",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Running Processes",
+      "type": "stat"
+    },
+    {
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -300,10 +335,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
+          "datasource": "Prometheus",
           "editorMode": "code",
           "expr": "100 - (avg by (instance) (rate(windows_cpu_time_total{mode=\"idle\", instance=~\"$instance\"}[2m])) * 100)",
           "legendFormat": "CPU Usage %",
@@ -315,10 +347,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -391,10 +420,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
+          "datasource": "Prometheus",
           "editorMode": "code",
           "expr": "windows_cs_physical_memory_bytes{instance=~\"$instance\"} - windows_os_physical_memory_free_bytes{instance=~\"$instance\"}",
           "legendFormat": "Memory Used",
@@ -402,10 +428,7 @@
           "refId": "A"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
+          "datasource": "Prometheus",
           "editorMode": "code",
           "expr": "windows_cs_physical_memory_bytes{instance=~\"$instance\"}",
           "legendFormat": "Total RAM",
@@ -417,10 +440,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -475,12 +495,9 @@
       "pluginVersion": "10.4.0",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
+          "datasource": "Prometheus",
           "editorMode": "code",
-          "expr": "(windows_logical_disk_free_bytes{instance=~\"$instance\"} / windows_logical_disk_size_bytes{instance=~\"$instance\"}) * 100",
+          "expr": "100 * (windows_logical_disk_free_bytes{volume=~\"[A-Z]:\", instance=~\"$instance\"} / windows_logical_disk_size_bytes{volume=~\"[A-Z]:\", instance=~\"$instance\"})",
           "format": "table",
           "instant": true,
           "legendFormat": "{{volume}}",
@@ -506,11 +523,8 @@
           "text": "All",
           "value": "$__all"
         },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "prometheus"
-        },
-        "definition": "label_values(windows_os_info, instance)",
+        "datasource": "Prometheus",
+        "definition": "label_values(up{job=\"windows-servers\"}, instance)",
         "hide": 0,
         "includeAll": true,
         "label": "Instance",
@@ -518,7 +532,7 @@
         "name": "instance",
         "options": [],
         "query": {
-          "query": "label_values(windows_os_info, instance)",
+          "query": "label_values(up{job=\"windows-servers\"}, instance)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -537,6 +551,6 @@
   "timezone": "browser",
   "title": "Windows Server Fleet Dashboard",
   "uid": "windows-server-fleet",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }

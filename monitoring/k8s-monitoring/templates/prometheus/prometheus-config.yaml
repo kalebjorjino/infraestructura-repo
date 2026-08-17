@@ -25,6 +25,12 @@ data:
               os: 'windows'
               environment: 'production'
               role: 'domain-controller'
+          - targets: ['10.2.3.247:9182']
+            labels:
+              instance: 'SERVIDOR_ARCHIVO'
+              os: 'windows'
+              environment: 'production'
+              role: 'file-server'
 
       - job_name: 'kubernetes-nodes'
         kubernetes_sd_configs:

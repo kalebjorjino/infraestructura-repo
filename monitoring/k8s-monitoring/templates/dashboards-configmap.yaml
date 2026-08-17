@@ -13,4 +13,6 @@ data:
 {{ .Files.Get "dashboards/kubernetes-nodes.json" | indent 4 }}
   workloads.json: |-
 {{ .Files.Get "dashboards/workloads.json" | indent 4 }}
+  windows-servers.json: |-
+{{ .Files.Get "dashboards/windows-servers.json" | indent 4 }}
 {{- end }}

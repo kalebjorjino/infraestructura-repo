@@ -17,6 +17,15 @@ data:
         static_configs:
           - targets: ['localhost:9090']
 
+      - job_name: 'windows-servers'
+        static_configs:
+          - targets: ['10.2.3.225:9182']
+            labels:
+              instance: 'SERVIDOR_DOMINIO'
+              os: 'windows'
+              environment: 'production'
+              role: 'domain-controller'
+
       - job_name: 'kubernetes-nodes'
         kubernetes_sd_configs:
           - role: node

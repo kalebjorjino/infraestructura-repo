@@ -81,36 +81,32 @@ data:
     rule_files:
       - '/etc/prometheus/alert_rules.yml'
 
-  alert_rules.yml: |
-      groups:
-        - name: windows_servers_alerts
-          rules:
-            - alert: WindowsServerDown
-              expr: up{job="windows-servers"} == 0
-              for: 1m
-              labels:
-                severity: critical
-              annotations:
-                summary: "Servidor Windows {{ $labels.instance }} está FUERA DE LÍNEA"
-                description: "El servidor {{ $labels.instance }} ({{ $labels.role }}) no responde a Prometheus desde hace más de 1 minuto."
-
-            - alert: WindowsHighCpuUsage
-              expr: 100 - (avg by (instance) (rate(windows_cpu_time_total{mode="idle"}[2m])) * 100) > 85
-              for: 3m
-              labels:
-                severity: warning
-              annotations:
-                summary: "Alto consumo de CPU en {{ $labels.instance }}"
-                description: "La CPU de {{ $labels.instance }} supera el 85% durante más de 3 minutos (Valor actual: {{ $value }}%)."
-
-            - alert: WindowsDiskSpaceLow
-              expr: 100 * (windows_logical_disk_free_bytes{volume=~"[A-Z]:"} / windows_logical_disk_size_bytes{volume=~"[A-Z]:"}) < 15
-              for: 2m
-              labels:
-                severity: critical
-              annotations:
-                summary: "Poco espacio en disco {{ $labels.volume }} en {{ $labels.instance }}"
-                description: "El volumen {{ $labels.volume }} en {{ $labels.instance }} tiene menos del 15% libre (Valor actual: {{ $value }}%)."  
-
-
+alert_rules.yml: |
+    groups:
+      - name: windows_servers_alerts
+        rules:
+          - alert: WindowsServerDown
+            expr: up{job="windows-servers"} == 0
+            for: 1m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Servidor Windows {{ "{{ $labels.instance }}" }} esta FUERA DE LINEA"
+              description: "El servidor {{ "{{ $labels.instance }}" }} ({{ "{{ $labels.role }}" }}) no responde a Prometheus desde hace mas de 1 minuto."
+          - alert: WindowsHighCpuUsage
+            expr: 100 - (avg by (instance) (rate(windows_cpu_time_total{mode="idle"}[2m])) * 100) > 85
+            for: 3m
+            labels:
+              severity: warning
+            annotations:
+              summary: "Alto consumo de CPU en {{ "{{ $labels.instance }}" }}"
+              description: "La CPU de {{ "{{ $labels.instance }}" }} supera el 85% durante mas de 3 minutos (Valor actual: {{ "{{ $value }}" }}%)."
+          - alert: WindowsDiskSpaceLow
+            expr: 100 * (windows_logical_disk_free_bytes{volume=~"[A-Z]:"} / windows_logical_disk_size_bytes{volume=~"[A-Z]:"}) < 15
+            for: 2m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Poco espacio en disco {{ "{{ $labels.volume }}" }} en {{ "{{ $labels.instance }}" }}"
+              description: "El volumen {{ "{{ $labels.volume }}" }} en {{ "{{ $labels.instance }}" }} tiene menos del 15% libre (Valor actual: {{ "{{ $value }}" }}%)."
 {{- end }}

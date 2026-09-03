@@ -38,7 +38,7 @@ spec:
             - name: GF_SMTP_USER
               value: "jgarciav@hrcallao.gob.pe"
             - name: GF_SMTP_PASSWORD
-              value: "3Nf4rm1t3c1root5"
+              value: "_P%PB{eqi5=Q2_Ce"
             - name: GF_SMTP_FROM_ADDRESS
               value: "jgarciav@hrcallao.gob.pe"
             - name: GF_SMTP_FROM_NAME

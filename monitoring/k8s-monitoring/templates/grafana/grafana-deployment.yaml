@@ -31,6 +31,20 @@ spec:
               value: {{ .Values.grafana.adminPassword | quote }}
             - name: GF_USERS_ALLOW_SIGN_UP
               value: "false"
+            - name: GF_SMTP_ENABLED
+              value: "true"
+            - name: GF_SMTP_HOST
+              value: "mail.hrcallao.gob.pe:465"
+            - name: GF_SMTP_USER
+              value: "jgarcia@hrcallao.gob.pe"
+            - name: GF_SMTP_PASSWORD
+              value: "3Nf4rm1t3c1root5"
+            - name: GF_SMTP_FROM_ADDRESS
+              value: "jgarcia@hrcallao.gob.pe"
+            - name: GF_SMTP_FROM_NAME
+              value: "Alertas TI - Infraestructura"
+            - name: GF_SMTP_SKIP_VERIFY
+              value: "true"
           ports:
             - name: http
               containerPort: 3000

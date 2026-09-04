@@ -31,6 +31,13 @@ data:
               os: 'windows'
               environment: 'production'
               role: 'file-server'
+          - targets: ['10.2.3.250:9182']
+            labels:
+              instance: 'ISACWEBTERA'
+              os: 'windows'
+              environment: 'production'
+              role: 'database-server'
+              engine: 'sql-server-express'
 
       - job_name: 'kubernetes-nodes'
         kubernetes_sd_configs:

@@ -118,4 +118,34 @@ data:
             annotations:
               summary: "Poco espacio en disco {{ "{{ $labels.volume }}" }} en {{ "{{ $labels.instance }}" }}"
               description: "El volumen {{ "{{ $labels.volume }}" }} en {{ "{{ $labels.instance }}" }} tiene menos del 15% libre (Valor actual: {{ "{{ $value }}" }}%)."
+
+          # 4. Caida del Motor de Base de Datos SQL Server
+          - alert: WindowsSqlServerDown
+            expr: windows_service_state{name="mssql$isacwebtera",state="running"} == 0
+            for: 1m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Servicio SQL Server DETENIDO en {{ "{{ $labels.instance }}" }}"
+              description: "El motor de base de datos SQL Server Express en {{ "{{ $labels.instance }}" }} esta detenido. El sistema SIGSS no puede operar."
+
+          # 5. Caida de Active Directory
+          - alert: WindowsActiveDirectoryDown
+            expr: windows_service_state{name="ntds",state="running"} == 0
+            for: 1m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Servicio Active Directory DETENIDO en {{ "{{ $labels.instance }}" }}"
+              description: "El servicio NTDS de Active Directory en {{ "{{ $labels.instance }}" }} esta detenido. Los usuarios no podran iniciar sesion en el dominio."
+
+          # 6. Caida del Servidor DNS
+          - alert: WindowsDnsServerDown
+            expr: windows_service_state{name="dns",state="running"} == 0
+            for: 1m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Servidor DNS DETENIDO en {{ "{{ $labels.instance }}" }}"
+              description: "El servidor DNS en {{ "{{ $labels.instance }}" }} esta detenido. La resolucion de nombres en la red del hospital fallara."
 {{- end }}

@@ -60,6 +60,8 @@ metadata:
     app.kubernetes.io/component: manager
 spec:
   replicas: {{ .Values.manager.replicaCount }}
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       {{- include "wazuh.selectorLabels" . | nindent 6 }}
@@ -92,7 +94,35 @@ spec:
             {{- toYaml .Values.manager.resources | nindent 12 }}
           volumeMounts:
             - name: manager-data
-              mountPath: /var/ossec/data
+              mountPath: /var/ossec/api/configuration
+              subPath: wazuh-api-configuration
+            - name: manager-data
+              mountPath: /var/ossec/etc
+              subPath: wazuh-etc
+            - name: manager-data
+              mountPath: /var/ossec/logs
+              subPath: wazuh-logs
+            - name: manager-data
+              mountPath: /var/ossec/queue
+              subPath: wazuh-queue
+            - name: manager-data
+              mountPath: /var/ossec/var/multigroups
+              subPath: wazuh-var-multigroups
+            - name: manager-data
+              mountPath: /var/ossec/integrations
+              subPath: wazuh-integrations
+            - name: manager-data
+              mountPath: /var/ossec/active-response/bin
+              subPath: wazuh-active-response
+            - name: manager-data
+              mountPath: /var/ossec/agentless
+              subPath: wazuh-agentless
+            - name: manager-data
+              mountPath: /var/ossec/wodles
+              subPath: wazuh-wodles
+            - name: manager-data
+              mountPath: /var/lib/filebeat
+              subPath: filebeat-data
             - name: filebeat-config
               mountPath: /etc/filebeat/filebeat.yml
               subPath: filebeat.yml

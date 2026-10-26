@@ -9,7 +9,8 @@ image:
 runner:
   organization: ""
   repository: "kalebjorjino/infraestructura-repo"
-  token: "AT2U6UKGT47IUKOBZWSPGF3KQC4GE"
+  existingSecret: "action-runner-github-pat"
+  existingSecretKey: "GITHUB_PAT"
   labels:
     - self-hosted
     - linux

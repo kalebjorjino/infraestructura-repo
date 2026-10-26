@@ -20,6 +20,23 @@ spec:
         - name: runner
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.runner.existingSecret }}
+          args:
+            - |
+              set -euo pipefail
+              API_PATH="repos/${RUNNER_REPO}"
+              if [ -n "${RUNNER_ORG:-}" ] && [ -z "${RUNNER_REPO:-}" ]; then
+                API_PATH="orgs/${RUNNER_ORG}"
+              fi
+              RUNNER_TOKEN=$(curl -fsSL -X POST \
+                -H "Authorization: Bearer ${GITHUB_PAT}" \
+                -H "Accept: application/vnd.github+json" \
+                -H "X-GitHub-Api-Version: 2022-11-28" \
+                "https://api.github.com/${API_PATH}/actions/runners/registration-token" | jq -er '.token')
+              export RUNNER_TOKEN
+              unset GITHUB_PAT
+              exec entrypoint.sh
+          {{- end }}
           env:
             - name: RUNNER_NAME
               valueFrom:
@@ -33,11 +50,19 @@ spec:
             - name: RUNNER_REPO
               value: {{ .Values.runner.repository | quote }}
             {{- end }}
+            {{- if .Values.runner.existingSecret }}
+            - name: GITHUB_PAT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.runner.existingSecret | quote }}
+                  key: {{ .Values.runner.existingSecretKey | default "GITHUB_PAT" | quote }}
+            {{- else }}
             - name: RUNNER_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: {{ include "action-runner.fullname" . }}-auth
                   key: RUNNER_TOKEN
+            {{- end }}
             - name: RUNNER_LABELS
               value: {{ join "," .Values.runner.labels | quote }}
             {{- with .Values.env }}

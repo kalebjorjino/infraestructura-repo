@@ -16,7 +16,10 @@ data:
         archives:
           enabled: false
 
-    setup.template.json.enabled: false
+    setup.template.json.enabled: true
+    setup.template.json.path: '/etc/filebeat/wazuh-template.json'
+    setup.template.json.name: 'wazuh'
+    setup.template.overwrite: true
     setup.ilm.enabled: false
     output.elasticsearch:
       hosts: ['http://{{ include "wazuh.fullname" . }}-indexer:9200']
@@ -126,6 +129,9 @@ spec:
             - name: filebeat-config
               mountPath: /etc/filebeat/filebeat.yml
               subPath: filebeat.yml
+            - name: wazuh-template
+              mountPath: /etc/filebeat/wazuh-template.json
+              subPath: wazuh-template.json
       volumes:
         - name: manager-data
           {{- if .Values.manager.storage.enabled }}
@@ -137,6 +143,9 @@ spec:
         - name: filebeat-config
           configMap:
             name: {{ include "wazuh.fullname" . }}-filebeat-config
+        - name: wazuh-template
+          configMap:
+            name: {{ include "wazuh.fullname" . }}-template
 ---
 apiVersion: v1
 kind: Service

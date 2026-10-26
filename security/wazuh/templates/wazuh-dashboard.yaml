@@ -19,7 +19,7 @@ data:
   wazuh.yml: |
     pattern: wazuh-alerts-*
     checks.pattern: true
-    checks.template: false
+    checks.template: true
     checks.api: true
     checks.setup: true
     hosts:

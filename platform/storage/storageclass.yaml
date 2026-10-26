@@ -1,7 +1,7 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: infra-storage
-provisioner: k8s.io/minikube-hostpath
+  name: local-path-retain
+provisioner: rancher.io/local-path
 volumeBindingMode: WaitForFirstConsumer
-reclaimPolicy: Delete
+reclaimPolicy: Retain
